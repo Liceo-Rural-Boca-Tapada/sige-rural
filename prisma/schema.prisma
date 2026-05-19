@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Estudiante {
+
+  id          Int     @id @default(autoincrement())
+
+  nombre      String
+  nivel       String
+  seccion     String
+  estado      String
+
+  encargado           String?
+  telefonoEncargado   String?
+
+  direccion           String?
+  correoEncargado     String?
+
+  asistencias      Asistencia[]
+  notas            Nota[]
+  justificaciones  Justificacion[]
+  alertas          Alerta[]
+  observaciones    Observacion[]
+  documentos       Documento[]
+}
+
+model Asistencia {
+
+  id            Int         @id @default(autoincrement())
+
+  fecha         DateTime
+  estado        String
+
+  estudianteId  Int
+  estudiante    Estudiante  @relation(fields: [estudianteId], references: [id])
+}
+
+model Usuario {
+
+  id        Int     @id @default(autoincrement())
+
+  nombre    String
+  correo    String  @unique
+  password  String
+  rol       String
+}
+
+model Profesor {
+
+  id        Int     @id @default(autoincrement())
+
+  nombre    String
+  materia   String
+  correo    String
+  estado    String
+}
+
+model Materia {
+
+  id        Int     @id @default(autoincrement())
+
+  nombre    String
+  nivel     String
+  seccion   String
+
+  notas     Nota[]
+}
+
+model Horario {
+
+  id          Int     @id @default(autoincrement())
+
+  grupo       String
+  dia         String
+  hora        String
+
+  materia     String
+  profesor    String
+
+  aula        String
+}
+
+model Nota {
+
+  id            Int        @id @default(autoincrement())
+
+  descripcion   String
+  valor         Float
+  porcentaje    Float?
+
+  fecha         DateTime   @default(now())
+
+  estudianteId  Int
+  estudiante    Estudiante @relation(fields: [estudianteId], references: [id])
+
+  materiaId     Int
+  materia       Materia    @relation(fields: [materiaId], references: [id])
+}
+
+model Justificacion {
+
+  id            Int        @id @default(autoincrement())
+
+  motivo        String
+  estado        String     @default("Pendiente")
+
+  fecha         DateTime   @default(now())
+
+  estudianteId  Int
+  estudiante    Estudiante @relation(fields: [estudianteId], references: [id])
+}
+
+model Alerta {
+
+  id            Int        @id @default(autoincrement())
+
+  tipo          String
+  descripcion   String
+  nivel         String
+
+  fecha         DateTime   @default(now())
+
+  estudianteId  Int
+  estudiante    Estudiante @relation(fields: [estudianteId], references: [id])
+}
+
+model Observacion {
+
+  id            Int        @id @default(autoincrement())
+
+  titulo        String
+  descripcion   String
+  tipo          String
+
+  fecha         DateTime   @default(now())
+
+  estudianteId  Int
+  estudiante    Estudiante @relation(fields: [estudianteId], references: [id])
+}
+
+model Documento {
+
+  id            Int        @id @default(autoincrement())
+
+  nombre        String
+  url           String
+
+  fecha         DateTime   @default(now())
+
+  estudianteId  Int
+  estudiante    Estudiante @relation(fields: [estudianteId], references: [id])
+}
